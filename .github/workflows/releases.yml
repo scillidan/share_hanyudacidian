@@ -1,0 +1,44 @@
+name: Create Releases
+on:
+  push:
+    tags:
+      - "v*" # Trigger the action on new tags that start with 'v'
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full zip tar
+      - name: Extract .7z files
+        run: |
+          for file in *.7z.001*; do
+            if [ -f "$file" ]; then
+              7z x "$file" -aoa  # Extract files, overwrite existing files without prompting
+            fi
+          done
+      - name: Create zip and tar.gz files
+        run: |
+          for dir in stardict-chibigenc-2.4.2 stardict-chibigenc-2.4.2-sc stardict-ecdict-2.4.2; do
+            if [ -d "$dir" ]; then
+              zip -r "${dir}.zip" "$dir"
+              tar -czf "${dir}.tar.gz" "$dir"
+            else
+              echo "Directory $dir does not exist, skipping..."
+            fi
+          done
+      - name: Pre-release
+        run: echo ${{ github.sha }} > Release.txt
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          tag_name: ${{ github.ref }}
+          files: |
+            *.zip
+            *.tar.gz
