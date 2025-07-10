@@ -1,10 +1,10 @@
-# file_sdcv
+# share_sdcv
 
 ## Usage
 
 For GoldenDict:
 
-1. Download `<dict>.zip` or `<dict>.tar.gz` from [Releases](https://github.com/scillidan/file_sdcv/releases).
+1. Download `<dict>.zip` or `<dict>.tar.gz` from [Releases](https://github.com/scillidan/share_sdcv/releases).
 2. Decompress it into `<dict>/`.
 3. Add `<dict>/` into GoldenDict.
 
@@ -13,7 +13,7 @@ For `sdcv`:
 ```sh
 cat <dict>/<dict>.ifo
 # Get bookname
-export STARDICT_DATA_DIR="<path_to>/file_sdcv"
+export STARDICT_DATA_DIR="<path_to>/share_sdcv"
 sdcv --color --use-dict=<bookname> <word>
 ````
 
