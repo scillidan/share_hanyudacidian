@@ -72,7 +72,8 @@ opencc -c <path>/.opencc/Lib/site-packages/opencc/clib/share/opencc/t2s.json -i 
 	Input File: <path_to>/stardict-chibigenc-2.4.2-sc/temp/chibigenc-sc
 	Input Format: Tabfile (.txt, .dic)
 	Output Format: <path_to>/stardict-chibigenc-2.4.2-sc/chibigenc
-	Output File: StarDict (Merge Syns)
+	Output File: StarDict (.ifo)
 	```
-2. Write Options → sametypesequence → Value → `x`.
+2. Write Options → sametypesequence → Value → `m`.
 3. Convert.
+
