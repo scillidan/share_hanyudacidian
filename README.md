@@ -4,7 +4,7 @@
 
 For GoldenDict:
 
-1. Download `<dict>.zip` or `<dict>.tar.gz` from [Releases](https://github.com/scillidan/share_sdcv/releases).
+1. Download `<dict>.zip` or `<dict>.tar.gz` from [Releases](https://github.com/scillidan/share_sdcv/releases). Look [here](#finally) to know which one to download.
 2. Decompress it into `<dict>/`.
 3. Add `<dict>/` into GoldenDict.
 
