@@ -38,12 +38,10 @@ pyglossary
 	```
 	Input File: <path_to>/stardict-chibigenc-2.4.2/chibigenc.ifo
 	Input Format: StarDict (.ifo)
-	Output Format: <path_to>/stardict-chibigenc-2.4.2-sc/temp/chibigenc.txt
+	Output Format: <path_to>/chibigenc.txt
 	Output File: Tabfile (.txt, .dic)
 	```
-2. Read Options → xsl → Value → True.
-3. Convert.
-4. Here is temporary file `chibigenc`.
+2. Convert.
 
 ### Convert TC to SC
 
@@ -62,18 +60,19 @@ uv venv .opencc --python 3.10
 .opencc\Scripts\activate.bat
 mklink %USERPROFILE%\.local\bin\opencc.exe %CD%\.opencc\Lib\site-packages\opencc\clib\bin\opencc.exe
 deactivate.bat
-opencc -c <path>/.opencc/Lib/site-packages/opencc/clib/share/opencc/t2s.json -i <path_to>/stardict-chibigenc-2.4.2-sc/temp/chibigenc.txt -o <path_to>/stardict-chibigenc-2.4.2-sc/temp/chibigenc-sc.txt
+opencc -c <path_to>/.opencc/Lib/site-packages/opencc/clib/share/opencc/t2s.json -i <path_to>/chibigenc.txt -o <path_to>/chibigenc-sc.txt
 ```
 
 ### Finally
 
 1. In pyglossary:
 	```
-	Input File: <path_to>/stardict-chibigenc-2.4.2-sc/temp/chibigenc-sc
+	Input File: <path_to>/chibigenc-sc.txt
 	Input Format: Tabfile (.txt, .dic)
-	Output Format: <path_to>/stardict-chibigenc-2.4.2-sc/chibigenc
+	Output Format: <path_to>/stardict-chibigenc-2.4.2-sc/chibigenc-sc
 	Output File: StarDict (.ifo)
 	```
-2. Write Options → sametypesequence → Value → `m`.
+2. Write Options → sametypesequence → Value. In my case:
+	- The `xdxf` export looks better in [GoldenDict](https://github.com/goldendict/goldendict), [sdcv](https://github.com/Dushistov/sdcv).
+	- The `plaintext` export looks better in [SilverDict](https://github.com/Crissium/SilverDict).
 3. Convert.
-

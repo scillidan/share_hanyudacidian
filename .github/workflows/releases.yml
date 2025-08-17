@@ -24,7 +24,7 @@ jobs:
           done
       - name: Create zip and tar.gz files
         run: |
-          for dir in stardict-chibigenc-2.4.2 stardict-chibigenc-2.4.2-sc stardict-ecdict-2.4.2; do
+          for dir in stardict-chibigenc-2.4.2-plaintext stardict-chibigenc-2.4.2-xdxf stardict-chibigenc-sc-2.4.2-plaintext stardict-chibigenc-sc-2.4.2-xdxf stardict-ecdict-2.4.2; do
             if [ -d "$dir" ]; then
               zip -r "${dir}.zip" "$dir"
               tar -czf "${dir}.tar.gz" "$dir"
