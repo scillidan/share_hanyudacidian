@@ -20,9 +20,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install pyglossary
-      	run: |
-      		python -m pip install --upgrade pip
-      		pip install pyglossary lxml beautifulsoup4
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyglossary lxml beautifulsoup4
       - name: Extract .7z files
         run: |
           for file in *.7z.001*; do
@@ -31,12 +31,12 @@ jobs:
             fi
           done
       - name: Run pyglossary
-      	run: |
-      		pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-stardict-html --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
-      		pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-stardict-plaintext --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian --write-options="sametypesequence=m"
-      		pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-yomitan.zip --read-format=Tabfile --write-format=Yomichan --name=HanYuDaCiDian
-      		python html2ansi.py ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-html2ansi.txt
-      		pyglossary ./HanYuDaCiDian-2.0-html2ansi.txt ./HanYuDaCiDian-2.0-stardict-html2ansi --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
+        run: |
+          pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-stardict-html --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
+          pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-stardict-plaintext --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian --write-options="sametypesequence=m"
+          pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-yomitan.zip --read-format=Tabfile --write-format=Yomichan --name=HanYuDaCiDian
+          python html2ansi.py ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-html2ansi.txt
+          pyglossary ./HanYuDaCiDian-2.0-html2ansi.txt ./HanYuDaCiDian-2.0-stardict-html2ansi --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
       - name: Create zip and tar.gz files
         run: |
           for dir in HanYuDaCiDian-2.0-stardict-html HanYuDaCiDian-2.0-stardict-html2ansi HanYuDaCiDian-2.0-stardict-plaintext; do
