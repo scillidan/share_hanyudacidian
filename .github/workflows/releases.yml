@@ -36,7 +36,7 @@ jobs:
           pyglossary ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-yomitan.zip --read-format=Tabfile --write-format=Yomichan --name=HanYuDaCiDian
           python html2ansi.py ./HanYuDaCiDian-2.0-html.txt ./HanYuDaCiDian-2.0-html2ansi.txt
           pyglossary ./HanYuDaCiDian-2.0-html2ansi.txt ./HanYuDaCiDian-2.0-stardict-html2ansi --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
-      - name: Create zip and tar.gz files
+      - name: Create zip files
         run: |
           zip HanYuDaCiDian-2.0-stardict-html.zip HanYuDaCiDian-2.0-stardict-html.ifo HanYuDaCiDian-2.0-stardict-html.dict.dz HanYuDaCiDian-2.0-stardict-html.idx
           zip HanYuDaCiDian-2.0-stardict-plaintext.zip HanYuDaCiDian-2.0-stardict-plaintext.ifo HanYuDaCiDian-2.0-stardict-plaintext.dict.dz HanYuDaCiDian-2.0-stardict-plaintext.idx
