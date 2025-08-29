@@ -33,4 +33,4 @@ sdcv --color --use-dict=HanYuDaCiDian <word>
 1. Download `汉语大词典源数据合并.txt` from [《汉语大词典》施工现场11.2](https://forum.freemdict.com/t/topic/16759). So this is not a stable or officially version.
 2. The origin layout and style from First Edition is better enough. See [HanYuDaCiDian_Vol01.png](HanYuDaCiDian_Vol01.png). Then format it by yourself. For me, I edit it in Sublime Text, save as `HanYuDaCiDian-html.txt`. Made some regex find, multi-cursor edit, replace all etc..
 3. Use `pyglossary` to convert finished `.txt` to multiple dictionary formats. I mainly use StarDict and Yomitan format.
-4. You can see [releases.yml](.github/workflow/releases.yml) to get other useful information.
+4. You can see [releases.yml](.github/workflows/releases.yml) to get other useful information.
