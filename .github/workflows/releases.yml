@@ -21,7 +21,7 @@ jobs:
           python-version: '3.11'
       - name: Install pyglossary
         run: |
-          pip install pyglossary lxml beautifulsoup4
+          pip install pyglossary lxml beautifulsoup4 python-idzip
       - name: Extract .7z files
         run: |
           for file in *.7z.001*; do
@@ -38,13 +38,9 @@ jobs:
           pyglossary ./HanYuDaCiDian-2.0-html2ansi.txt ./HanYuDaCiDian-2.0-stardict-html2ansi --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
       - name: Create zip and tar.gz files
         run: |
-          for dir in HanYuDaCiDian-2.0-stardict-html HanYuDaCiDian-2.0-stardict-html2ansi HanYuDaCiDian-2.0-stardict-plaintext; do
-            if [ -d "$dir" ]; then
-              zip -r "${dir}.zip" "$dir"
-            else
-              echo "Directory $dir does not exist, skipping..."
-            fi
-          done
+          zip HanYuDaCiDian-2.0-stardict-html.zip HanYuDaCiDian-2.0-stardict-html.ifo HanYuDaCiDian-2.0-stardict-html.dict.dz HanYuDaCiDian-2.0-stardict-html.idx
+          zip HanYuDaCiDian-2.0-stardict-plaintext.zip HanYuDaCiDian-2.0-stardict-plaintext.ifo HanYuDaCiDian-2.0-stardict-plaintext.dict.dz HanYuDaCiDian-2.0-stardict-plaintext.idx
+          zip HanYuDaCiDian-2.0-stardict-html2ansi.zip HanYuDaCiDian-2.0-stardict-html2ansi.ifo HanYuDaCiDian-2.0-stardict-html2ansi.dict.dz HanYuDaCiDian-2.0-stardict-html2ansi.idx
       - name: Pre-release
         run: echo ${{ github.sha }} > Release.txt
       - name: Release
