@@ -33,11 +33,12 @@ sdcv --color --use-dict=HanYuDaCiDian <word>
 cargo install hanconv
 vim sdcv-hanyu.sh
 # Copy from https://gist.github.com/scillidan/967a1a4e5cf7bcbfacfb59e56b23b3dc
-chmod +x sdcv-hanyu.sh
+chmod +x ./sdcv-hanyu.sh
 # Search with SC and TC both
 ./sdcv-hanyu.sh <word>
 # Install
 ln -sfn $(pwd)/sdcv-hanyu.sh ~/.local/bin/hanyu
+hanyu <word>
 # Uninstall
 rm ~/.local/bin/hanyu
 ```
