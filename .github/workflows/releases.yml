@@ -61,7 +61,7 @@ jobs:
           # pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-sdcv-mergesyns --read-format=Tabfile --write-format=StardictMergeSyns --name=HanYuDaCiDian
 
           # dictd
-          # CJK not support at present, check https://fossies.org/linux/dictd/TODO
+          # Not support searching CJK words at present, check https://fossies.org/linux/dictd/TODO.
           # pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-dictd --read-format=Tabfile --write-format=DictOrg --write-options="dictzip=true" --name=HanYuDaCiDian
 
           # yomichan
