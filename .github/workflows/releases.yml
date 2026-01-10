@@ -1,0 +1,118 @@
+name: Create Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name'
+        required: true
+        type: string
+      release_name:
+        description: 'Release name'
+        required: true
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+env:
+  VERSION: ${{ github.event.inputs.tag_name }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install pyglossary
+        run: |
+          pip install pyglossary lxml beautifulsoup4 python-idzip tqdm
+
+      - name: (HanYuDaCiDian) Download the tabfile
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: wget https://github.com/scillidan/file_hanyudacidian/releases/download/${VERSION}/_hanyudacidian-${VERSION}-formatted.txt
+
+      - name: Convert with pyglossary and python scripts
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          # stardict
+          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-stardict --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
+
+          # tabfile-formatted-html2ansi
+          python html2ansi.py ./_hanyudacidian-${VERSION}-formatted.txt ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt
+
+          # sdcv
+          pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-sdcv --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
+
+          # pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-sdcv-mergesyns --read-format=Tabfile --write-format=StardictMergeSyns --name=HanYuDaCiDian
+
+          # dictd
+          # CJK not support at present, check https://fossies.org/linux/dictd/TODO
+          # pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-dictd --read-format=Tabfile --write-format=DictOrg --write-options="dictzip=true" --name=HanYuDaCiDian
+
+          # yomichan
+          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-yomichan.zip --read-format=Tabfile --write-format=Yomichan --name=HanYuDaCiDian
+
+      - name: Create ZIP files of Stardict
+        run: |
+          for base in *.ifo; do
+            prefix="${base%.ifo}"
+            if [[ ! -f "$prefix.ifo" ]]; then
+              echo "Skipping $prefix, missing $prefix.ifo"
+              continue
+            fi
+            if [[ ! -f "$prefix.idx" ]]; then
+              echo "Skipping $prefix, missing $prefix.idx"
+              continue
+            fi
+            dict_file=""
+            if [[ -f "$prefix.dict.dz" ]]; then
+              dict_file="$prefix.dict.dz"
+            elif [[ -f "$prefix.dict" ]]; then
+              dict_file="$prefix.dict"
+            else
+              echo "Skipping $prefix, missing $prefix.dict.dz or $prefix.dict"
+              continue
+            fi
+            echo "Creating ${prefix}.zip from $prefix.ifo, $dict_file, $prefix.idx"
+            zip -j "${prefix}.zip" "$prefix.ifo" "$dict_file" "$prefix.idx"
+          done
+
+      # - name: Create ZIP files of dictd
+      #   env:
+      #     VERSION: ${{ env.VERSION }}
+      #   run: |
+      #     zip -j "hanyudacidian-${VERSION}-dictd.zip" "hanyudacidian-${VERSION}-dictd.dict.dz" "hanyudacidian-${VERSION}-dictd.index"
+
+      - name: Generate SHA256 checksums
+        run: |
+          for file in ./_*.txt ./hanyudacidian-*.zip;
+          do
+            if [ -f "$file" ]; then
+              sha256sum "$file" > "$file.sha256";
+              echo "Generated checksum for $file";
+            fi
+          done
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name }}
+          name: ${{ github.event.inputs.release_name || github.event.inputs.tag_name }}
+          files: |
+            _*.txt
+            hanyudacidian-*.zip
