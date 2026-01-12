@@ -67,7 +67,7 @@ jobs:
           pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-yomichan.zip --read-format=Tabfile --write-format=Yomichan --name=HanYuDaCiDian
 
           # aard2
-          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${version}-aard2.slob --read-format=Tabfile --write-format=Aard2Slob --name=HanYuDaCiDian
+          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-aard2.slob --read-format=Tabfile --write-format=Aard2Slob --name=HanYuDaCiDian
 
       - name: Create ZIP files of Stardict
         run: |
@@ -102,7 +102,7 @@ jobs:
 
       - name: Generate SHA256 checksums
         run: |
-          for file in ./_*.txt ./*.zip ./*.slob;
+          for file in _*.txt *.zip *.slob;
           do
             if [ -f "$file" ]; then
               sha256sum "$file" > "$file.sha256";
