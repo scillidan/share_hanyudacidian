@@ -36,9 +36,8 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install pyglossary
-        run: |
-          pip install pyglossary lxml beautifulsoup4 python-idzip tqdm
+      - name: Install pyglossary and dependencies
+        run: pip install pyglossary lxml beautifulsoup4 python-idzip tqdm pyicu
 
       - name: (HanYuDaCiDian) Download the tabfile
         env:
