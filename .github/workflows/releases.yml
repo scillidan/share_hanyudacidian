@@ -48,46 +48,47 @@ jobs:
         env:
           VERSION: ${{ env.VERSION }}
         run: |
+          filename: hanyudacidian-${VERSION}
+          dictname: HanYuDaCiDian
+
           # stardict
-          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-stardict --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
+          pyglossary ./_${fliename}-formatted.txt ./${fliename}-stardict --read-format=Tabfile --write-format=Stardict --name=${VERSION}
 
           # tabfile-formatted-html2ansi
-          python html2ansi.py ./_hanyudacidian-${VERSION}-formatted.txt ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt
+          python html2ansi.py ./_${fliename}-formatted.txt ./_${fliename}-formatted-html2ansi.txt
 
           # sdcv
-          pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-sdcv --read-format=Tabfile --write-format=Stardict --name=HanYuDaCiDian
+          pyglossary ./_${fliename}-formatted-html2ansi.txt ./${fliename}-sdcv --read-format=Tabfile --write-format=Stardict --name=${VERSION}
 
-          # pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-sdcv-mergesyns --read-format=Tabfile --write-format=StardictMergeSyns --name=HanYuDaCiDian
+          # pyglossary ./_${fliename}-formatted-html2ansi.txt ./${fliename}-sdcv-mergesyns --read-format=Tabfile --write-format=StardictMergeSyns --name=${VERSION}
 
           # dictd
           # Not support searching CJK words at present, check https://fossies.org/linux/dictd/TODO.
-          # pyglossary ./_hanyudacidian-${VERSION}-formatted-html2ansi.txt ./hanyudacidian-${VERSION}-dictd --read-format=Tabfile --write-format=DictOrg --write-options="dictzip=true" --name=HanYuDaCiDian
+          # pyglossary ./_${fliename}-formatted-html2ansi.txt ./${fliename}-dictd --read-format=Tabfile --write-format=DictOrg --write-options="dictzip=true" --name=${VERSION}
 
           # yomichan
-          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-yomichan.zip --read-format=Tabfile --write-format=Yomichan --name=HanYuDaCiDian
+          pyglossary ./_${fliename}-formatted.txt ./${fliename}-yomichan.zip --read-format=Tabfile --write-format=Yomichan --name=${VERSION}
 
           # aard2
-          pyglossary ./_hanyudacidian-${VERSION}-formatted.txt ./hanyudacidian-${VERSION}-aard2.slob --read-format=Tabfile --write-format=Aard2Slob --name=HanYuDaCiDian
+          pyglossary ./_${fliename}-formatted.txt ./${fliename}-aard2.slob --read-format=Tabfile --write-format=Aard2Slob --name=${VERSION}
 
-      - name: ZIP Stardict
+      - name: ZIP stardict
         run: |
           for base in *.ifo; do
             prefix="${base%.ifo}"
-            zip -j "${prefix}.zip" "$prefix.ifo" "$prefix.dict" "$prefix.idx" 2>/dev/null || true
+            zip -j "${prefix}.zip" "$prefix".{ifo,dict,idx,syn} 2>/dev/null
           done
 
       # - name: ZIP dictd
-      #   env:
-      #     VERSION: ${{ env.VERSION }}
       #   run: |
-      #     prefix=hanyudacidian
-      #     zip -j "${prefix}-${VERSION}-dictd.zip" \
-      #       "${prefix}-${VERSION}-dictd.dict.dz" \
-      #       "${prefix}-${VERSION}-dictd.index"
+      #     for base in *.index; do
+      #       prefix="${base%.index}"
+      #       zip -j "${prefix}.zip" "$prefix".{index,dict.dz} 2>/dev/null
+      #     done
 
       - name: Generate SHA256 checksums
         run: |
-          for file in _*.txt *.zip *.slob; do
+          for file in *.{txt,zip,slob}; do
             sha256sum "$file" > "$file.sha256"
           done
 
@@ -97,6 +98,4 @@ jobs:
           tag_name: ${{ github.event.inputs.tag_name }}
           name: ${{ github.event.inputs.release_name || github.event.inputs.tag_name }}
           files: |
-            _*.txt
-            *.zip
-            *.slob
+            *.{txt,zip,slob}
