@@ -32,9 +32,9 @@ jobs:
           sudo apt-get install -y zip
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install pyglossary and dependencies
         run: pip install pyglossary lxml beautifulsoup4 python-idzip tqdm pyicu
