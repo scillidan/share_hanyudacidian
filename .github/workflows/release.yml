@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name'
+        required: true
+        type: string
+      release_name:
+        description: 'Release name'
+        required: true
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v6
+        with:
+          persist-credentials: false
+
+      - name: Install required packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+
+      - name: Set up Python
+        uses: actions/setup-python@8d9ed9ac5b5349cb32a66bb81d1a1499cddbe391  # v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pyglossary and dependencies
+        run: pip install pyglossary lxml beautifulsoup4 python-idzip tqdm pyicu
+
+      - name: (HanYuDaCiDian) Download the tabfile
+        env:
+          TAG: ${{ github.event.inputs.tag_name }}
+        run: wget https://github.com/scillidan/file_hanyudacidian/releases/download/${TAG}/_hanyudacidian-${TAG}-formatted.txt
+
+      - name: Convert with pyglossary and python scripts
+        env:
+          TAG: ${{ github.event.inputs.tag_name }}
+        run: |
+          filename=hanyudacidian-${TAG}
+          dictname=HanYuDaCiDian
+          pyglossary ./_${filename}-formatted.txt ./${filename}-stardict --read-format=Tabfile --write-format=Stardict --name=${TAG}
+          python html2ansi.py ./_${filename}-formatted.txt ./_${filename}-formatted-html2ansi.txt
+          pyglossary ./_${filename}-formatted-html2ansi.txt ./${filename}-sdcv --read-format=Tabfile --write-format=Stardict --name=${TAG}
+          pyglossary ./_${filename}-formatted.txt ./${filename}-yomichan.zip --read-format=Tabfile --write-format=Yomichan --name=${TAG}
+          pyglossary ./_${filename}-formatted.txt ./${filename}-aard2.slob --read-format=Tabfile --write-format=Aard2Slob --name=${TAG}
+
+      - name: ZIP stardict
+        run: |
+          for base in *.ifo; do
+            prefix="${base%.ifo}"
+            zip -j "${prefix}.zip" "$prefix".{ifo,dict,idx,syn} 2>/dev/null
+          done
+
+      - name: Generate SHA256 checksums
+        run: |
+          for file in *.{txt,zip,slob}; do
+            sha256sum "$file" > "$file.sha256"
+          done
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.event.inputs.tag_name }}" \
+            *.txt *.zip *.slob \
+            --title "${{ github.event.inputs.release_name || github.event.inputs.tag_name }}" \
+            --generate-notes
