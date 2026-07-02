@@ -1,6 +1,6 @@
 # share_hanyudacidian
 
-[![Create Releases](https://github.com/scillidan/share_hanyudacidian/actions/workflows/releases.yml/badge.svg)](https://github.com/scillidan/share_hanyudacidian/actions/workflows/releases.yml)
+[![Release](https://github.com/scillidan/share_hanyudacidian/actions/workflows/release.yml/badge.svg)](https://github.com/scillidan/share_hanyudacidian/actions/workflows/release.yml)
 
 This is not a stable or officially release. Data from `汉语大词典源数据合并.txt` on [《汉语大词典》施工现场11.2](https://forum.freemdict.com/t/topic/16759). Read more on [hanyudacidian.cn](https://www.hanyudacidian.cn)，[Wikipedia](https://zh.wikipedia.org/wiki/%E6%BC%A2%E8%AA%9E%E5%A4%A7%E8%A9%9E%E5%85%B8).
 
