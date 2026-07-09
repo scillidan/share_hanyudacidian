@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name'
+        required: true
+        type: string
+      release_name:
+        description: 'Release name'
+        required: true
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+env:
+  VERSION: ${{ github.event.inputs.tag_name }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v6
+      with:
+        persist-credentials: false
+
+    - name: Install required packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zip
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    - name: Install pyglossary and dependencies
+      run: pip install pyglossary lxml beautifulsoup4 python-idzip tqdm pyicu
+
+    - name: (HanYuDaCiDian) Download the tabfile
+      env:
+        VERSION: ${{ env.VERSION }}
+      run: wget https://github.com/scillidan/file_hanyudacidian/releases/download/${VERSION}/_hanyudacidian-${VERSION}-formatted.txt
+
+    - name: Convert with pyglossary and python scripts
+      env:
+        VERSION: ${{ env.VERSION }}
+      run: |
+        filename=hanyudacidian-${VERSION}
+        dictname=HanYuDaCiDian
+
+        # stardict
+        pyglossary ./_${filename}-formatted.txt ./${filename}-stardict --read-format=Tabfile --write-format=Stardict --name=${dictname}
+
+        # tabfile-formatted-html2ansi
+        python html2ansi.py ./_${filename}-formatted.txt ./_${filename}-formatted-html2ansi.txt
+
+        # sdcv
+        pyglossary ./_${filename}-formatted-html2ansi.txt ./${filename}-sdcv --read-format=Tabfile --write-format=Stardict --name=${dictname}
+
+        # pyglossary ./_${filename}-formatted-html2ansi.txt ./${filename}-sdcv-mergesyns --read-format=Tabfile --write-format=StardictMergeSyns --name=${dictname}
+
+        # dictd
+        # Not support searching CJK words at present, check https://fossies.org/linux/dictd/TODO.
+        # pyglossary ./_${filename}-formatted-html2ansi.txt ./${filename}-dictd --read-format=Tabfile --write-format=DictOrg --write-options="dictzip=true" --name=${dictname}
+
+        # yomichan
+        pyglossary ./_${filename}-formatted.txt ./${filename}-yomichan.zip --read-format=Tabfile --write-format=Yomichan --name=${dictname}
+
+        # aard2
+        pyglossary ./_${filename}-formatted.txt ./${filename}-aard2.slob --read-format=Tabfile --write-format=Aard2Slob --name=${dictname}
+
+    - name: ZIP stardict
+      run: |
+        for base in *.ifo; do
+          prefix="${base%.ifo}"
+          zip -j "${prefix}.zip" "$prefix".{ifo,dict,idx,syn} 2>/dev/null
+        done
+
+    - name: Generate SHA256 checksums
+      run: |
+        for file in *.{txt,zip,slob}; do
+          sha256sum "$file" > "$file.sha256"
+        done
+
+    - name: Create GitHub Release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ env.VERSION }}
+        RELEASE_NAME: ${{ github.event.inputs.release_name }}
+      run: |
+        gh release create "$VERSION" \
+          *.txt *.zip *.slob \
+          --title "${RELEASE_NAME:-$VERSION}" \
+          --generate-notes
